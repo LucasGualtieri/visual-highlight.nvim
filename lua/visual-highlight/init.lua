@@ -1,8 +1,9 @@
 local M = {}
 
-function M.setup(config)
-    -- Forward the config to the core module
-    require('visual-highlight.core').setup(config or {})
+function M.setup()
+    -- No configuration options yet, but we'll keep the setup function
+    -- for future extensibility
+    require('visual-highlight.core').setup()
 end
 
 return M

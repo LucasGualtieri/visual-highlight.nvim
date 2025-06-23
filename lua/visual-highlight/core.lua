@@ -1,5 +1,8 @@
 local M = {}
 
+-- FIX: When the user presses 'o' to change the direction of the selection
+-- it should mantain all the mateches highlighted
+
 -- Default configuration
 local default_config = {
     highlight_group = "VisualMatches",
@@ -95,15 +98,21 @@ local function update_highlights()
     -- Only proceed in visual modes
     if not (mode == "v" or mode == "V" or mode == "") then
         last_pattern = nil
+        last_range = nil
         return
     end
 
     -- Get current selection pattern
     local pattern = get_visual_selection()
-    if not pattern or #pattern == 0 or pattern == last_pattern then
+    if not pattern or #pattern == 0 then return end
+
+    -- Also check if selection range changed (to catch 'o' direction change)
+    local new_range = vim.inspect(vim.fn.getpos("v")) .. vim.inspect(vim.fn.getpos("."))
+    if pattern == last_pattern and new_range == last_range then
         return
     end
     last_pattern = pattern
+    last_range = new_range
 
     -- Find all matches using brute force
     current_matches = brute_force_search(bufnr, pattern)
